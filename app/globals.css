@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  --paper:   #f6f4ee;   /* απαλό ιβουάρ, όπως το mockup */
+  --panel:   #fdfcf8;   /* κάρτες, σχεδόν λευκό */
+  --ink:     #3b403a;   /* ζεστό ανθρακί (όχι μαύρο) */
+  --muted:   #86867a;
+  --olive:   #6b7f66;   /* κύριο accent — eucalyptus */
+  --olive-d: #566a52;
+  --sage:    #93a487;   /* δευτερεύον — ασημί φασκόμηλο */
+  --blue:    #7e968d;   /* dusty blue-green πινελιά */
+  --sage-t:  #e9eee2;   /* απαλό sage για γεμίσματα */
+  --line:    #e6e2d6;
+  --shadow:  0 16px 40px -20px rgba(86,106,82,0.40);
+  /* Geologica παντού· Manrope ως ασφαλές ελληνικό fallback */
+  --display: 'Geologica', 'Manrope', system-ui, -apple-system, sans-serif;
+  --body:    'Geologica', 'Manrope', system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.wrap { max-width: 600px; margin: 0 auto; padding: 40px 22px 72px; }
+
+/* ---------- Τυπογραφία ---------- */
+h1 { font-family: var(--display); font-weight: 600; font-size: 32px; line-height: 1.1; letter-spacing: .3px; margin: 0 0 8px; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 23px; letter-spacing: .3px; margin: 30px 0 12px; }
+p  { color: var(--muted); margin: 8px 0; }
+a  { color: var(--olive); }
+.muted { color: var(--muted); font-size: 14px; }
+code { background: var(--sage-t); padding: 1px 6px; border-radius: 6px; font-size: 13px; }
+
+.eyebrow {
+  font-family: var(--body); font-weight: 600; font-size: 12px;
+  letter-spacing: .3em; text-transform: uppercase; color: var(--sage);
+}
+
+/* ---------- Hero ---------- */
+.hero { position: relative; text-align: center; padding-top: 6vh; }
+.hero > * { position: relative; z-index: 1; }
+.names {
+  font-family: var(--display); font-weight: 600; color: var(--ink);
+  font-size: clamp(42px, 13vw, 66px); line-height: 1.02; margin: 14px 0 6px;
+}
+.names .amp { font-weight: 400; color: var(--sage); padding: 0 .12em; }
+.tagline { font-family: var(--display); font-weight: 400; font-size: clamp(16px, 4.4vw, 20px); color: var(--muted); margin-top: 6px; letter-spacing: .01em; }
+
+.ornament { color: var(--sage); display: block; margin: 0 auto; }
+.ornament--sm { color: var(--sage); display: block; margin: 22px auto; opacity: .8; }
+
+/* ---------- Date bar (SAT | 07 | NOV στυλ) ---------- */
+.datebar {
+  display: inline-flex; align-items: center; gap: 14px; margin: 10px auto 0;
+  font-family: var(--body); font-weight: 600; font-size: 12px;
+  letter-spacing: .28em; text-transform: uppercase; color: var(--muted);
+}
+.datebar .sep { color: var(--sage); font-weight: 400; }
+.datebar .d { font-family: var(--display); font-size: 22px; letter-spacing: .05em; color: var(--ink); }
+
+/* ---------- Γωνιακά φυλλώματα (πλαισίωση hero) ---------- */
+.leaf-corner {
+  position: absolute; z-index: 0; color: var(--sage);
+  width: clamp(108px, 30vw, 170px); height: auto;
+  pointer-events: none; user-select: none;
+  opacity: 0; animation: leafin 1.1s ease .15s forwards;
+}
+.leaf-corner.tl { top: -18px;    left: -30px; }
+.leaf-corner.br { bottom: -14px; right: -30px; transform: scale(-1,-1); }
+.leaf-corner .accent { color: var(--blue); }
+@keyframes leafin    { from { opacity: 0; } to { opacity: .62; } }
+.leaf-corner.br { animation-name: leafin-br; }
+@keyframes leafin-br { from { opacity: 0; } to { opacity: .62; transform: scale(-1,-1); } }
+
+/* Ονόματα στοιβαγμένα κάθετα (χωράνε μακριά ελληνικά ονόματα) */
+.names.stack { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1; }
+.names.stack .amp { font-size: .52em; margin: 2px 0; }
+
+.pagehead { text-align: center; margin-bottom: 8px; }
+
+/* ---------- Reveal (καθαρό CSS, χωρίς JS) ---------- */
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.r { opacity: 0; animation: rise .7s cubic-bezier(.2,.7,.2,1) forwards; }
+.r1 { animation-delay: .05s; } .r2 { animation-delay: .16s; }
+.r3 { animation-delay: .27s; } .r4 { animation-delay: .38s; }
+.r5 { animation-delay: .5s; }  .r6 { animation-delay: .62s; }
+
+/* ---------- Κάρτες ---------- */
+.card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 16px; padding: 24px; margin: 16px 0; box-shadow: var(--shadow);
+}
+
+/* ---------- Action rows (σελίδα /party) ---------- */
+.actions { margin-top: 26px; display: flex; flex-direction: column; gap: 14px; }
+.action {
+  display: flex; align-items: center; gap: 15px;
+  padding: 17px 18px; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 16px;
+  text-decoration: none; color: var(--ink);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.action:hover, .action:focus-visible { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--sage); outline: none; }
+.action .ic {
+  flex: none; width: 48px; height: 48px; border-radius: 50%;
+  background: var(--sage-t); display: grid; place-items: center; font-size: 22px;
+}
+.action .tx { display: flex; flex-direction: column; }
+.action .t { font-family: var(--display); font-size: 20px; font-weight: 600; line-height: 1.15; }
+.action .s { font-size: 13px; color: var(--muted); }
+.action .chev { margin-left: auto; color: var(--sage); font-size: 20px; }
+
+/* ---------- Κουμπιά ---------- */
+.btn {
+  display: block; width: 100%; text-align: center; padding: 16px;
+  margin: 12px 0; border-radius: 14px; border: 1px solid var(--olive);
+  background: var(--olive); color: #fbfaf4; font-size: 16px; font-weight: 600;
+  font-family: var(--body); text-decoration: none; cursor: pointer;
+  transition: background .18s ease, transform .1s ease;
+}
+.btn:hover { background: var(--olive-d); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .6; cursor: default; }
+.btn.secondary { background: transparent; color: var(--olive); }
+.btn.secondary:hover { background: var(--sage-t); }
+
+/* ---------- Φόρμες ---------- */
+label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin: 16px 0 6px; }
+input, textarea, select {
+  width: 100%; padding: 13px; font-size: 16px; font-family: var(--body);
+  color: var(--ink); border: 1px solid var(--line); border-radius: 12px;
+  background: #fff; transition: border-color .15s ease, box-shadow .15s ease;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px var(--sage-t);
+}
+.radio-row { display: flex; gap: 10px; margin: 8px 0; }
+.radio-row label { flex: 1; text-align: center; padding: 13px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; margin: 0; transition: border-color .15s, background .15s; }
+.radio-row label:hover { border-color: var(--sage); }
+.radio-row input { display: none; }
+.radio-row input:checked + span { font-weight: 700; color: var(--olive); }
+
+/* ---------- Κουίζ ---------- */
+.opt {
+  display: block; width: 100%; text-align: left; padding: 15px 16px; margin: 9px 0;
+  border-radius: 12px; border: 1px solid var(--line); background: #fff;
+  font-family: var(--body); font-size: 16px; color: var(--ink); cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+.opt:hover { border-color: var(--sage); }
+.opt[data-state="correct"] { background: #e8efdf; border-color: #9db480; }
+.opt[data-state="wrong"]   { background: #f3e3df; border-color: #d3a99f; }
+.opt[disabled] { cursor: default; }
+.result { text-align: center; }
+.result .emoji { font-size: 46px; line-height: 1; }
+.result .rt { font-family: var(--display); font-size: 22px; font-weight: 600; color: var(--ink); margin: 8px 0 2px; }
+.score { font-size: 18px; color: var(--ink); margin-top: 12px; }
+.qcount { text-align: center; }
+
+/* ---------- Admin ---------- */
+.stats { display: flex; gap: 8px; }
+.stat { flex: 1; text-align: center; }
+.stat .big { font-family: var(--display); font-size: 27px; font-weight: 700; color: var(--ink); }
+.stat .lbl { font-size: 11.5px; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+.pill { display: inline-block; padding: 2px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.pill.yes { background: #e8efdf; color: #47632f; }
+.pill.no  { background: #f3e3df; color: #8a473a; }
+.wish { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.wish .w-msg { color: var(--ink); }
+.wish .w-by { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+/* ---------- Λίστα αρχείων (σελίδα /upload) ---------- */
+.filelist { list-style: none; padding: 0; margin: 14px 0 4px; }
+.fi { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.fi-ic { flex: none; }
+.fi-nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+.fi-st { flex: none; font-size: 13px; color: var(--muted); }
+.fi.ok  .fi-st { color: #47632f; font-weight: 700; }
+.fi.error .fi-st { color: #8a473a; }
+.fi.uploading .fi-st { color: var(--olive); }
+
+/* ---------- Gallery (admin) ---------- */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+.ph { position: relative; display: block; aspect-ratio: 1; border-radius: 10px; overflow: hidden;
+      background: var(--sage-t); border: 1px solid var(--line); text-decoration: none; }
+.ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ph-vid { width: 100%; height: 100%; display: grid; place-items: center; font-size: 26px; color: var(--olive); }
+.ph-vlbl { display: block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.ph-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 3px 6px; font-size: 10.5px;
+          color: #fff; background: linear-gradient(transparent, rgba(43,49,42,.72)); white-space: nowrap;
+          overflow: hidden; text-overflow: ellipsis; }
+
+.footer { text-align: center; margin-top: 40px; color: var(--sage); font-family: var(--display); font-weight: 400; font-size: 15px; letter-spacing: .02em; }
+.footer a { color: var(--sage); text-decoration: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .r { opacity: 1; animation: none; }
+  .action, .btn { transition: none; }
+  .leaf-corner { opacity: .9; animation: none; }
+  .leaf-corner.br { transform: scale(-1,-1); }
+}
