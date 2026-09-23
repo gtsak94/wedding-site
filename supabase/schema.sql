@@ -49,6 +49,12 @@ create table if not exists media (
   created_at  timestamptz default now()
 );
 
+-- Σύνδεση φωτο/ευχών/quiz με συγκεκριμένο καλεσμένο (όταν μπαίνει από το προσωπικό
+-- του link). Nullable: οι ανώνυμες συμμετοχές (κοινό QR) μένουν χωρίς guest_id.
+alter table media       add column if not exists guest_id uuid references guests(id) on delete set null;
+alter table wishes      add column if not exists guest_id uuid references guests(id) on delete set null;
+alter table quiz_scores add column if not exists guest_id uuid references guests(id) on delete set null;
+
 -- Το bucket αποθήκευσης. Ιδιωτικό: η πρόσβαση γίνεται με signed URLs από τον server.
 insert into storage.buckets (id, name, public)
 values ('uploads', 'uploads', false)

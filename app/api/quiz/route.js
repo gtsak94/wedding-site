@@ -1,11 +1,13 @@
-import { getAdminClient } from '../../../lib/supabase'
+import { getAdminClient, resolveGuest } from '../../../lib/supabase'
 
 export async function POST(req) {
   try {
-    const { name, score, total } = await req.json()
+    const { token, name, score, total } = await req.json()
     const sb = getAdminClient()
+    const guest = await resolveGuest(sb, token)
     const { error } = await sb.from('quiz_scores').insert({
-      name: (name || 'Ανώνυμος').slice(0, 80),
+      guest_id: guest?.id || null,
+      name: guest?.name || (name || 'Ανώνυμος').slice(0, 80),
       score: Number(score) || 0,
       total: Number(total) || 0,
     })

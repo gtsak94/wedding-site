@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { COUPLE } from '../../lib/config'
 import Ornament from '../../components/Ornament'
+import { useGuestParam } from '../../lib/useGuestParam'
 
 const A = COUPLE.a
 const B = COUPLE.b
@@ -31,6 +32,7 @@ function resultFor(score) {
 }
 
 export default function QuizPage() {
+  const { token, name: guestName } = useGuestParam()
   const [name, setName] = useState('')
   const [started, setStarted] = useState(false)
   const [i, setI] = useState(0)
@@ -39,6 +41,7 @@ export default function QuizPage() {
   const [done, setDone] = useState(false)
 
   const total = QUESTIONS.length
+  const q = token ? `?t=${encodeURIComponent(token)}&n=${encodeURIComponent(guestName)}` : ''
 
   function choose(idx) {
     if (picked !== null) return
@@ -53,7 +56,7 @@ export default function QuizPage() {
       try {
         await fetch('/api/quiz', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: name || 'Ανώνυμος', score, total }),
+          body: JSON.stringify({ token: token || undefined, name: name || 'Ανώνυμος', score, total }),
         })
       } catch (e) {}
     }
@@ -65,11 +68,15 @@ export default function QuizPage() {
         <div className="pagehead">
           <Ornament className="ornament r r1" width={160} />
           <h1 className="r r2">Πόσο καλά μας ξέρεις;</h1>
-          <p className="r r2">Γράψε το όνομά σου και ξεκίνα!</p>
+          <p className="r r2">{token ? `Έτοιμη/ος, ${guestName || 'φίλε'}; Πάμε!` : 'Γράψε το όνομά σου και ξεκίνα!'}</p>
         </div>
         <div className="card r r3">
-          <label>Το όνομά σου</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="π.χ. Γιάννης" />
+          {!token && (
+            <>
+              <label>Το όνομά σου</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="π.χ. Γιάννης" />
+            </>
+          )}
           <button className="btn" style={{ marginTop: 18 }} onClick={() => setStarted(true)}>Ξεκίνα</button>
         </div>
       </main>
@@ -88,8 +95,8 @@ export default function QuizPage() {
           <div className="score">Σκορ: <strong>{score}/{total}</strong></div>
         </div>
         <p style={{ textAlign: 'center' }}>📸 Τώρα σειρά σου να αφήσεις μια ανάμνηση!</p>
-        <a className="btn" href="/wishes">💌 Άφησε μια ευχή</a>
-        <a className="btn secondary" href="/party">📸 Ανέβασε φωτογραφίες & βίντεο</a>
+        <a className="btn" href={`/wishes${q}`}>💌 Άφησε μια ευχή</a>
+        <a className="btn secondary" href={`/upload${q}`}>📸 Ανέβασε φωτογραφίες & βίντεο</a>
       </main>
     )
   }

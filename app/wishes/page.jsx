@@ -2,11 +2,15 @@
 import { useState } from 'react'
 import { COUPLE } from '../../lib/config'
 import Ornament from '../../components/Ornament'
+import { useGuestParam } from '../../lib/useGuestParam'
 
 export default function WishesPage() {
+  const { token, name: guestName } = useGuestParam()
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState('idle')
+
+  const back = token ? `/rsvp/${token}` : '/party'
 
   async function submit() {
     if (!message.trim()) return
@@ -14,7 +18,7 @@ export default function WishesPage() {
     try {
       const res = await fetch('/api/wishes', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, message }),
+        body: JSON.stringify({ token: token || undefined, name, message }),
       })
       setStatus(res.ok ? 'saved' : 'error')
     } catch (e) { setStatus('error') }
@@ -28,7 +32,7 @@ export default function WishesPage() {
           <h1>Ευχαριστούμε! 💛</h1>
         </div>
         <div className="card"><p style={{ color: 'var(--ink)' }}>Η ευχή σου καταχωρήθηκε — {COUPLE.full} θα τη διαβάσουν.</p></div>
-        <a className="btn secondary" href="/party">Πίσω στην αρχική</a>
+        <a className="btn secondary" href={back}>← Πίσω</a>
       </main>
     )
   }
@@ -41,8 +45,14 @@ export default function WishesPage() {
         <p className="r r2">Δυο λόγια στους {COUPLE.full}.</p>
       </div>
       <div className="card r r3">
-        <label>Το όνομά σου (προαιρετικό)</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="π.χ. Γιάννης & Μαρία" />
+        {token ? (
+          <p className="muted" style={{ marginTop: 0 }}>Γράφεις ως <strong style={{ color: 'var(--ink)' }}>{guestName || 'καλεσμένος'}</strong> 🤍</p>
+        ) : (
+          <>
+            <label>Το όνομά σου (προαιρετικό)</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="π.χ. Γιάννης & Μαρία" />
+          </>
+        )}
         <label>Η ευχή σου</label>
         <textarea rows="5" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Να ζήσετε! …" />
         <button className="btn" style={{ marginTop: 18 }} onClick={submit} disabled={status === 'saving'}>

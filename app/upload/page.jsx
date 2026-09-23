@@ -2,6 +2,7 @@
 import { useState, useRef } from 'react'
 import { COUPLE, UPLOAD } from '../../lib/config'
 import Ornament from '../../components/Ornament'
+import { useGuestParam } from '../../lib/useGuestParam'
 
 // Συμπίεση εικόνας στον browser με canvas (χωρίς εξωτερική βιβλιοθήκη).
 async function compressImage(file) {
@@ -30,6 +31,7 @@ async function compressImage(file) {
 function humanMB(bytes) { return (bytes / 1048576).toFixed(1) }
 
 export default function UploadPage() {
+  const { token, name: guestName } = useGuestParam()
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
   const [phase, setPhase] = useState('during')
@@ -79,8 +81,10 @@ export default function UploadPage() {
     await fetch('/api/upload/commit', {
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        path: sign.path, kind: it.kind, guest_name: name, message,
-        phase, size_bytes: body.size, mime,
+        path: sign.path, kind: it.kind,
+        token: token || undefined,
+        guest_name: token ? undefined : name,
+        message, phase, size_bytes: body.size, mime,
       }),
     })
   }
@@ -118,8 +122,14 @@ export default function UploadPage() {
       </div>
 
       <div className="card r r3">
-        <label>Το όνομά σου (προαιρετικό)</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="π.χ. Μαρία" />
+        {token ? (
+          <p className="muted" style={{ marginTop: 0 }}>Ανεβάζεις ως <strong style={{ color: 'var(--ink)' }}>{guestName || 'καλεσμένος'}</strong> 🤍</p>
+        ) : (
+          <>
+            <label>Το όνομά σου (προαιρετικό)</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="π.χ. Μαρία" />
+          </>
+        )}
 
         <label>Δυο λόγια μαζί με τις φωτο (προαιρετικό)</label>
         <textarea rows={2} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Μια ανάμνηση, μια ευχή…" />
@@ -171,7 +181,7 @@ export default function UploadPage() {
         )}
       </div>
 
-      <div className="footer r r3"><a href="/party">← Πίσω</a></div>
+      <div className="footer r r3"><a href={token ? `/rsvp/${token}` : '/party'}>← Πίσω</a></div>
     </main>
   )
 }
