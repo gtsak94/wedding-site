@@ -2,7 +2,10 @@ import { getAdminClient } from '../../lib/supabase'
 import { COUPLE, UPLOAD } from '../../lib/config'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: `Admin — ${COUPLE.full}` }
+export const metadata = {
+  title: `Admin — ${COUPLE.full}`,
+  robots: { index: false, follow: false },
+}
 
 export default async function AdminPage({ searchParams }) {
   const key = searchParams?.key
@@ -17,21 +20,26 @@ export default async function AdminPage({ searchParams }) {
   }
 
   const sb = getAdminClient()
-  const { data: rsvps = [] } = await sb.from('rsvps')
-    .select('attending, num_guests, message, created_at, guests(name)').order('created_at', { ascending: false })
-  const { data: scores = [] } = await sb.from('quiz_scores')
-    .select('name, score, total, created_at').order('score', { ascending: false }).limit(50)
-  const { data: wishes = [] } = await sb.from('wishes')
-    .select('name, message, created_at').order('created_at', { ascending: false })
-  const { data: media = [] } = await sb.from('media')
-    .select('path, kind, guest_name, message, phase, created_at').order('created_at', { ascending: false })
+  // Ασφαλές fetch: αν κάποιο query αποτύχει (π.χ. λείπει πίνακας), επιστρέφει [] αντί να σκάσει η σελίδα.
+  const safe = async (q) => { try { const { data } = await q; return data || [] } catch { return [] } }
+
+  const rsvps = await safe(sb.from('rsvps')
+    .select('attending, num_guests, message, created_at, guests(name)').order('created_at', { ascending: false }))
+  const scores = await safe(sb.from('quiz_scores')
+    .select('name, score, total, created_at').order('score', { ascending: false }).limit(50))
+  const wishes = await safe(sb.from('wishes')
+    .select('name, message, created_at').order('created_at', { ascending: false }))
+  const media = await safe(sb.from('media')
+    .select('path, kind, guest_name, message, phase, created_at').order('created_at', { ascending: false }))
 
   // signed URLs για προεπισκόπηση (ιδιωτικό bucket)
   const signed = {}
   const paths = media.map((m) => m.path)
   if (paths.length) {
-    const { data: urls } = await sb.storage.from(UPLOAD.bucket).createSignedUrls(paths, 3600)
-    urls?.forEach((u, i) => { if (u?.signedUrl) signed[paths[i]] = u.signedUrl })
+    try {
+      const { data: urls } = await sb.storage.from(UPLOAD.bucket).createSignedUrls(paths, 3600)
+      urls?.forEach((u, i) => { if (u?.signedUrl) signed[paths[i]] = u.signedUrl })
+    } catch {}
   }
 
   const yes = rsvps.filter((r) => r.attending)

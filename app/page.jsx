@@ -1,17 +1,26 @@
-import { COUPLE } from '../lib/config'
+import { COUPLE, WEDDING } from '../lib/config'
+import Ornament from '../components/Ornament'
+import CornerLeaves from '../components/CornerLeaves'
+
+export const metadata = { title: COUPLE.full }
 
 export default function Home() {
   return (
     <main className="wrap">
-      <h1>💍 {COUPLE.full} — δοκιμαστική αρχική</h1>
-      <p>Χρήσιμα links για τοπική δοκιμή:</p>
-      <div className="card">
-        <p><a href="/party">/party</a> — η landing του QR (φωτο + κουίζ + ευχές)</p>
-        <p><a href="/quiz">/quiz</a> — το κουίζ</p>
-        <p><a href="/wishes">/wishes</a> — ευχές (guestbook)</p>
-        <p><a href="/rsvp/demo-token">/rsvp/demo-token</a> — RSVP (τρέξε πρώτα <code>npm run seed</code>)</p>
-        <p><a href="/admin?key=changeme">/admin?key=…</a> — dashboard ζευγαριού</p>
-      </div>
+      <section className="hero">
+        <CornerLeaves />
+        <div className="eyebrow r r1">{WEDDING.invite}</div>
+        <Ornament className="ornament r r2" width={172} />
+        <h1 className="names stack r r3">
+          <span>{COUPLE.a}</span>
+          <span className="amp">&</span>
+          <span>{COUPLE.b}</span>
+        </h1>
+        <p className="tagline r r4">{WEDDING.date} · {WEDDING.place}</p>
+        <a className="btn cta r r5" href="/party">Είσοδος →</a>
+      </section>
+
+      <div className="footer r r6">{WEDDING.closing}, {COUPLE.a} & {COUPLE.b}</div>
     </main>
   )
 }
