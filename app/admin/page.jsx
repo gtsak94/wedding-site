@@ -2,6 +2,7 @@ import { getAdminClient } from '../../lib/supabase'
 import { COUPLE, UPLOAD } from '../../lib/config'
 import AdminManage from '../../components/AdminManage'
 import AdminDelete from '../../components/AdminDelete'
+import CopyLink from '../../components/CopyLink'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -27,7 +28,7 @@ export default async function AdminPage({ searchParams }) {
   // Ασφαλές fetch: αν κάποιο query αποτύχει (π.χ. λείπει πίνακας), επιστρέφει [] αντί να σκάσει η σελίδα.
   const safe = async (q) => { try { const { data } = await q; return data || [] } catch { return [] } }
 
-  const guests = await safe(sb.from('guests').select('id, name').order('name', { ascending: true }))
+  const guests = await safe(sb.from('guests').select('id, name, token').order('name', { ascending: true }))
   const rsvps = await safe(sb.from('rsvps')
     .select('guest_id, attending, num_guests, message, created_at, guests(name)').order('created_at', { ascending: false }))
   const scores = await safe(sb.from('quiz_scores')
@@ -107,7 +108,7 @@ export default async function AdminPage({ searchParams }) {
               const rsvp = rsvpByGuest[g.id]
               return (
                 <tr key={g.id}>
-                  <td>{g.name}</td>
+                  <td>{g.name} <CopyLink token={g.token} /></td>
                   <td>{rsvp === true ? <span className="pill yes">Ναι</span> : rsvp === false ? <span className="pill no">Όχι</span> : <span className="muted">—</span>}</td>
                   <td>{photosByGuest[g.id] || '—'}</td>
                   <td>{videosByGuest[g.id] || '—'}</td>

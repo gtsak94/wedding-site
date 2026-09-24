@@ -212,6 +212,14 @@ th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: v
 }
 .del-btn:hover { background: #f0d3cb; border-color: #c99; }
 
+.copy-btn {
+  border: 1px solid var(--line); background: var(--sage-t); color: var(--olive);
+  min-width: 26px; height: 24px; border-radius: 7px; cursor: pointer; font-size: 12px;
+  line-height: 1; display: inline-grid; place-items: center; padding: 0 6px; vertical-align: middle;
+  margin-left: 6px; transition: background .15s ease, border-color .15s ease;
+}
+.copy-btn:hover { border-color: var(--sage); background: #dfe7d4; }
+
 .footer { text-align: center; margin-top: 40px; color: var(--sage); font-family: var(--display); font-weight: 400; font-size: 15px; letter-spacing: .02em; }
 .footer a { color: var(--sage); text-decoration: none; }
 

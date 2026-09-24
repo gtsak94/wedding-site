@@ -1,14 +1,16 @@
 'use client'
 import { useState } from 'react'
+import CopyLink from './CopyLink'
 
 export default function AdminManage({ adminKey }) {
   const [name, setName] = useState('')
   const [busy, setBusy] = useState(false)
   const [newLink, setNewLink] = useState('')
+  const [newToken, setNewToken] = useState('')
 
   async function addGuest() {
     if (!name.trim()) return
-    setBusy(true); setNewLink('')
+    setBusy(true); setNewLink(''); setNewToken('')
     try {
       const res = await fetch('/api/admin/add-guest', {
         method: 'POST', headers: { 'content-type': 'application/json' },
@@ -17,8 +19,9 @@ export default function AdminManage({ adminKey }) {
       const d = await res.json()
       if (res.ok) {
         setNewLink(`${window.location.origin}/rsvp/${d.token}`)
+        setNewToken(d.token)
         setName('')
-        setTimeout(() => location.reload(), 2500)
+        setTimeout(() => location.reload(), 4000)
       } else alert('Σφάλμα: ' + (d.error || ''))
     } catch { alert('Σφάλμα δικτύου') }
     setBusy(false)
@@ -44,7 +47,7 @@ export default function AdminManage({ adminKey }) {
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ονοματεπώνυμο" />
         <button className="btn" style={{ width: 'auto', margin: 0, padding: '0 18px', flex: 'none' }} onClick={addGuest} disabled={busy}>Προσθήκη</button>
       </div>
-      {newLink && <p className="muted" style={{ marginTop: 8 }}>✅ Νέο link: <code>{newLink}</code> (αντίγραψέ το τώρα)</p>}
+      {newLink && <p className="muted" style={{ marginTop: 8 }}>✅ Νέο link: <code>{newLink}</code> <CopyLink token={newToken} /></p>}
 
       <hr style={{ border: 'none', borderTop: '1px solid var(--line)', margin: '18px 0' }} />
 
