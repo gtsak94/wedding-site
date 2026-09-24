@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "seed": "node --env-file=.env.local scripts/generate-guests.mjs"
+    "seed": "node --env-file=.env.local scripts/generate-guests.mjs",
+    "download": "node --env-file=.env.local scripts/download-media.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

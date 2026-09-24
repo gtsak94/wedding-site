@@ -1,5 +1,7 @@
 import { getAdminClient } from '../../lib/supabase'
 import { COUPLE, UPLOAD } from '../../lib/config'
+import AdminManage from '../../components/AdminManage'
+import AdminDelete from '../../components/AdminDelete'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -33,7 +35,7 @@ export default async function AdminPage({ searchParams }) {
   const wishes = await safe(sb.from('wishes')
     .select('guest_id, name, message, created_at').order('created_at', { ascending: false }))
   const media = await safe(sb.from('media')
-    .select('guest_id, path, kind, guest_name, message, phase, created_at').order('created_at', { ascending: false }))
+    .select('id, guest_id, path, kind, guest_name, message, phase, created_at').order('created_at', { ascending: false }))
 
   // signed URLs για προεπισκόπηση (ιδιωτικό bucket)
   const signed = {}
@@ -75,6 +77,9 @@ export default async function AdminPage({ searchParams }) {
         <div className="stat"><div className="big">{photoCount}+{videoCount}</div><div className="lbl">Φωτο + Βίντεο</div></div>
       </div>
 
+      <h2>Διαχείριση</h2>
+      <AdminManage adminKey={key} />
+
       <h2>RSVP</h2>
       <div className="card">
         <table>
@@ -96,7 +101,7 @@ export default async function AdminPage({ searchParams }) {
       <h2>Συμμετοχή ανά καλεσμένο</h2>
       <div className="card">
         <table>
-          <thead><tr><th>Καλεσμένος</th><th>RSVP</th><th>📸</th><th>🎬</th><th>💌</th><th>🧠</th></tr></thead>
+          <thead><tr><th>Καλεσμένος</th><th>RSVP</th><th>📸</th><th>🎬</th><th>💌</th><th>🧠</th><th></th></tr></thead>
           <tbody>
             {guests.map((g) => {
               const rsvp = rsvpByGuest[g.id]
@@ -108,10 +113,11 @@ export default async function AdminPage({ searchParams }) {
                   <td>{videosByGuest[g.id] || '—'}</td>
                   <td>{wishedGuest[g.id] ? '✓' : '—'}</td>
                   <td>{bestQuizByGuest[g.id] != null ? `${bestQuizByGuest[g.id]}/${quizTotal}` : '—'}</td>
+                  <td><AdminDelete adminKey={key} endpoint="/api/admin/delete-guest" payload={{ id: g.id }} confirmText={`Διαγραφή του/της ${g.name}; (θα φύγει και το RSVP του)`} /></td>
                 </tr>
               )
             })}
-            {guests.length === 0 && <tr><td colSpan="6" className="muted">Κανένας καλεσμένος ακόμα (τρέξε το seed).</td></tr>}
+            {guests.length === 0 && <tr><td colSpan="7" className="muted">Κανένας καλεσμένος ακόμα (τρέξε το seed).</td></tr>}
           </tbody>
         </table>
         <p className="muted" style={{ marginTop: 10 }}>Μετρώνται μόνο όσα έγιναν από το προσωπικό link του καθενός. Οι ανώνυμες συμμετοχές (κοινό QR) φαίνονται στους πίνακες πιο κάτω.</p>
@@ -143,15 +149,19 @@ export default async function AdminPage({ searchParams }) {
         {media.length === 0 && <p className="muted">Κανένα αρχείο ακόμα.</p>}
         <div className="gallery">
           {media.map((m, i) => (
-            <a key={i} className="ph" href={signed[m.path] || '#'} target="_blank" rel="noopener noreferrer"
-               title={[m.guest_name, m.message].filter(Boolean).join(' — ')}>
-              {m.kind === 'image'
-                ? <img src={signed[m.path]} alt={m.guest_name || 'φωτο'} loading="lazy" />
-                : <span className="ph-vid">🎬<span className="ph-vlbl">Βίντεο</span></span>}
-              {(m.guest_name || m.phase) && (
-                <span className="ph-cap">{m.guest_name || 'Καλεσμένος'}{m.phase === 'before' ? ' · πριν' : ''}</span>
-              )}
-            </a>
+            <div key={i} className="ph-wrap">
+              <a className="ph" href={signed[m.path] || '#'} target="_blank" rel="noopener noreferrer"
+                 title={[m.guest_name, m.message].filter(Boolean).join(' — ')}>
+                {m.kind === 'image'
+                  ? <img src={signed[m.path]} alt={m.guest_name || 'φωτο'} loading="lazy" />
+                  : <span className="ph-vid">🎬<span className="ph-vlbl">Βίντεο</span></span>}
+                {(m.guest_name || m.phase) && (
+                  <span className="ph-cap">{m.guest_name || 'Καλεσμένος'}{m.phase === 'before' ? ' · πριν' : ''}</span>
+                )}
+              </a>
+              <AdminDelete adminKey={key} endpoint="/api/admin/delete-media" payload={{ id: m.id, path: m.path }}
+                confirmText="Διαγραφή αυτού του αρχείου;" className="del-btn ph-del" />
+            </div>
           ))}
         </div>
       </div>

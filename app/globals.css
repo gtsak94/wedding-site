@@ -200,6 +200,17 @@ th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: v
 .ph-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 3px 6px; font-size: 10.5px;
           color: #fff; background: linear-gradient(transparent, rgba(43,49,42,.72)); white-space: nowrap;
           overflow: hidden; text-overflow: ellipsis; }
+.ph-wrap { position: relative; }
+.ph-del { position: absolute; top: 4px; right: 4px; z-index: 2; }
+
+/* ---------- Κουμπί διαγραφής (admin) ---------- */
+.del-btn {
+  border: 1px solid #d9b3ab; background: #f7e7e2; color: #8a473a;
+  width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: 13px;
+  line-height: 1; display: inline-grid; place-items: center; padding: 0;
+  transition: background .15s ease, border-color .15s ease;
+}
+.del-btn:hover { background: #f0d3cb; border-color: #c99; }
 
 .footer { text-align: center; margin-top: 40px; color: var(--sage); font-family: var(--display); font-weight: 400; font-size: 15px; letter-spacing: .02em; }
 .footer a { color: var(--sage); text-decoration: none; }
