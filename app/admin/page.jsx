@@ -2,6 +2,8 @@ import { getAdminClient } from '../../lib/supabase'
 import { COUPLE, UPLOAD } from '../../lib/config'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
 export const metadata = {
   title: `Admin — ${COUPLE.full}`,
   robots: { index: false, follow: false },
