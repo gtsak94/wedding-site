@@ -73,7 +73,7 @@ export default function QuizPage() {
         <div className="card r r3">
           {!token && (
             <>
-              <label>Το όνομά σου</label>
+              <label>Το όνομά σου (προαιρετικό)</label>
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="π.χ. Γιάννης" />
             </>
           )}
