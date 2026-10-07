@@ -31,7 +31,7 @@ export default function WishesPage() {
           <Ornament className="ornament" width={160} />
           <h1>Ευχαριστούμε! 💛</h1>
         </div>
-        <div className="card"><p style={{ color: 'var(--ink)' }}>Η ευχή σου καταχωρήθηκε — {COUPLE.full} θα τη διαβάσουν.</p></div>
+        <div className="card"><p style={{ color: 'var(--ink)' }}>Η ευχή σου καταχωρήθηκε!</p></div>
         <a className="btn secondary" href={back}>← Πίσω</a>
       </main>
     )
