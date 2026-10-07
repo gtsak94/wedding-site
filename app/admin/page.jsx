@@ -156,8 +156,8 @@ export default async function AdminPage({ searchParams }) {
                 {m.kind === 'image'
                   ? <img src={signed[m.path]} alt={m.guest_name || 'φωτο'} loading="lazy" />
                   : <span className="ph-vid">🎬<span className="ph-vlbl">Βίντεο</span></span>}
-                {(m.guest_name || m.phase) && (
-                  <span className="ph-cap">{m.guest_name || 'Καλεσμένος'}{m.phase === 'before' ? ' · πριν' : ''}</span>
+                {m.guest_name && (
+                  <span className="ph-cap">{m.guest_name}</span>
                 )}
               </a>
               <AdminDelete adminKey={key} endpoint="/api/admin/delete-media" payload={{ id: m.id, path: m.path }}

@@ -95,8 +95,8 @@ export default function QuizPage() {
           <div className="score">Σκορ: <strong>{score}/{total}</strong></div>
         </div>
         <p style={{ textAlign: 'center' }}>📸 Τώρα σειρά σου να αφήσεις μια ανάμνηση!</p>
-        <a className="btn" href={`/wishes${q}`}>💌 Άφησε μια ευχή</a>
-        <a className="btn secondary" href={`/upload${q}`}>📸 Ανέβασε φωτογραφίες & βίντεο</a>
+        <a className="btn" href={`/upload${q}`}>📸 Ανέβασε φωτογραφίες & βίντεο</a>
+        <a className="btn secondary" href="/party">← Πίσω</a>
       </main>
     )
   }

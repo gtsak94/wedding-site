@@ -34,7 +34,6 @@ export default function UploadPage() {
   const { token, name: guestName } = useGuestParam()
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
-  const [phase, setPhase] = useState('during')
   const [items, setItems] = useState([])   // {file, status, kind, error}
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(0)
@@ -84,7 +83,7 @@ export default function UploadPage() {
         path: sign.path, kind: it.kind,
         token: token || undefined,
         guest_name: token ? undefined : name,
-        message, phase, size_bytes: body.size, mime,
+        message, size_bytes: body.size, mime,
       }),
     })
   }
@@ -133,12 +132,6 @@ export default function UploadPage() {
 
         <label>Δυο λόγια μαζί με τις φωτο (προαιρετικό)</label>
         <textarea rows={2} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Μια ανάμνηση, μια ευχή…" />
-
-        <label>Πότε τραβήχτηκαν;</label>
-        <div className="radio-row">
-          <label><input type="radio" name="phase" checked={phase === 'before'} onChange={() => setPhase('before')} /><span>Πριν τον γάμο</span></label>
-          <label><input type="radio" name="phase" checked={phase === 'during'} onChange={() => setPhase('during')} /><span>Στον γάμο</span></label>
-        </div>
 
         <label>Αρχεία</label>
         <input ref={inputRef} type="file" accept="image/*,video/*" multiple onChange={pick} />

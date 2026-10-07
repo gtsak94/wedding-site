@@ -37,15 +37,6 @@ export default function PartyPage() {
           </span>
           <span className="chev">→</span>
         </a>
-
-        <a className="action r r6" href="/wishes">
-          <span className="ic">💌</span>
-          <span className="tx">
-            <span className="t">Άφησε μια ευχή</span>
-            <span className="s">Δυο λόγια που θα μείνουν για πάντα</span>
-          </span>
-          <span className="chev">→</span>
-        </a>
       </div>
 
       <div className="footer r r6">{WEDDING.closing}, {COUPLE.a} & {COUPLE.b}</div>

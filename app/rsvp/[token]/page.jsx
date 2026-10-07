@@ -35,7 +35,7 @@ export default async function RsvpPage({ params }) {
     )
   }
 
-  // token + όνομα ταξιδεύουν στα actions ώστε φωτο/quiz/ευχές να χρεώνονται στον καλεσμένο
+  // token + όνομα ταξιδεύουν στην ευχή ώστε να χρεώνεται στον καλεσμένο
   const q = `?t=${encodeURIComponent(token)}&n=${encodeURIComponent(guest.name)}`
 
   return (
@@ -49,24 +49,8 @@ export default async function RsvpPage({ params }) {
 
       <RsvpForm token={token} existing={existing} />
 
-      <h2 style={{ textAlign: 'center' }}>Και λίγα ακόμα…</h2>
+      <h2 style={{ textAlign: 'center' }}>Και κάτι ακόμα…</h2>
       <div className="actions">
-        <a className="action" href={`/upload${q}`}>
-          <span className="ic">📸</span>
-          <span className="tx">
-            <span className="t">Ανέβασε φωτογραφίες & βίντεο</span>
-            <span className="s">Οι στιγμές σου, με το όνομά σου</span>
-          </span>
-          <span className="chev">→</span>
-        </a>
-        <a className="action" href={`/quiz${q}`}>
-          <span className="ic">🧠</span>
-          <span className="tx">
-            <span className="t">Πόσο καλά μας ξέρεις;</span>
-            <span className="s">10 γρήγορες ερωτήσεις — με αστείο φινάλε</span>
-          </span>
-          <span className="chev">→</span>
-        </a>
         <a className="action" href={`/wishes${q}`}>
           <span className="ic">💌</span>
           <span className="tx">
