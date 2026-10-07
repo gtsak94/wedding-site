@@ -220,6 +220,16 @@ th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: v
 }
 .copy-btn:hover { border-color: var(--sage); background: #dfe7d4; }
 
+/* ---------- Pagination ---------- */
+.pager { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; font-size: 13px; }
+.pg-btn {
+  border: 1px solid var(--line); background: var(--panel); color: var(--olive);
+  padding: 7px 14px; border-radius: 10px; cursor: pointer; font-family: var(--body);
+  font-size: 13px; font-weight: 600; transition: background .15s ease, border-color .15s ease;
+}
+.pg-btn:hover:not(:disabled) { border-color: var(--sage); background: var(--sage-t); }
+.pg-btn:disabled { opacity: .45; cursor: default; }
+
 .footer { text-align: center; margin-top: 40px; color: var(--sage); font-family: var(--display); font-weight: 400; font-size: 15px; letter-spacing: .02em; }
 .footer a { color: var(--sage); text-decoration: none; }
 

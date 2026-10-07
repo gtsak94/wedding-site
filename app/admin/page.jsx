@@ -3,6 +3,9 @@ import { COUPLE, UPLOAD } from '../../lib/config'
 import AdminManage from '../../components/AdminManage'
 import AdminDelete from '../../components/AdminDelete'
 import CopyLink from '../../components/CopyLink'
+import PagedTable from '../../components/PagedTable'
+import Paginator from '../../components/Paginator'
+import Gallery from '../../components/Gallery'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -66,6 +69,44 @@ export default async function AdminPage({ searchParams }) {
   wishes.forEach((w) => { if (w.guest_id) wishedGuest[w.guest_id] = true })
   const quizTotal = scores.length ? scores[0].total : 10
 
+  // ---- Προετοιμασία γραμμών για τους paginated πίνακες ----
+  const rsvpRows = rsvps.map((r, i) => ({
+    key: i,
+    cells: [
+      r.guests?.name || '—',
+      <span className={'pill ' + (r.attending ? 'yes' : 'no')}>{r.attending ? 'Ναι' : 'Όχι'}</span>,
+      r.attending ? r.num_guests : '—',
+      r.message || '',
+    ],
+  }))
+
+  const partRows = guests.map((g) => {
+    const rsvp = rsvpByGuest[g.id]
+    return {
+      key: g.id,
+      cells: [
+        <span>{g.name} <CopyLink token={g.token} /></span>,
+        rsvp === true ? <span className="pill yes">Ναι</span> : rsvp === false ? <span className="pill no">Όχι</span> : <span className="muted">—</span>,
+        photosByGuest[g.id] || '—',
+        videosByGuest[g.id] || '—',
+        wishedGuest[g.id] ? '✓' : '—',
+        bestQuizByGuest[g.id] != null ? `${bestQuizByGuest[g.id]}/${quizTotal}` : '—',
+        <AdminDelete adminKey={key} endpoint="/api/admin/delete-guest" payload={{ id: g.id }} confirmText={`Διαγραφή του/της ${g.name}; (θα φύγει και το RSVP του)`} />,
+      ],
+    }
+  })
+
+  const quizRows = scores.map((s, i) => ({ key: i, cells: [i + 1, s.name, `${s.score}/${s.total}`] }))
+
+  const mediaItems = media.map((m) => ({
+    id: m.id,
+    path: m.path,
+    kind: m.kind,
+    url: signed[m.path],
+    caption: m.guest_name || '',
+    filename: `${(m.guest_name || 'anonymous').replace(/[^\p{L}\p{N}_-]+/gu, '_').slice(0, 40)}__${m.path.split('/').pop()}`,
+  }))
+
   return (
     <main className="wrap">
       <div className="pagehead"><h1>Wedding Dashboard</h1></div>
@@ -82,90 +123,26 @@ export default async function AdminPage({ searchParams }) {
       <AdminManage adminKey={key} />
 
       <h2>RSVP</h2>
-      <div className="card">
-        <table>
-          <thead><tr><th>Καλεσμένος</th><th>Απάντηση</th><th>Άτομα</th><th>Μήνυμα</th></tr></thead>
-          <tbody>
-            {rsvps.map((r, i) => (
-              <tr key={i}>
-                <td>{r.guests?.name || '—'}</td>
-                <td><span className={'pill ' + (r.attending ? 'yes' : 'no')}>{r.attending ? 'Ναι' : 'Όχι'}</span></td>
-                <td>{r.attending ? r.num_guests : '—'}</td>
-                <td>{r.message || ''}</td>
-              </tr>
-            ))}
-            {rsvps.length === 0 && <tr><td colSpan="4" className="muted">Καμία απάντηση ακόμα.</td></tr>}
-          </tbody>
-        </table>
-      </div>
+      <PagedTable header={['Καλεσμένος', 'Απάντηση', 'Άτομα', 'Μήνυμα']} rows={rsvpRows} pageSize={15} empty="Καμία απάντηση ακόμα." />
 
       <h2>Συμμετοχή ανά καλεσμένο</h2>
-      <div className="card">
-        <table>
-          <thead><tr><th>Καλεσμένος</th><th>RSVP</th><th>📸</th><th>🎬</th><th>💌</th><th>🧠</th><th></th></tr></thead>
-          <tbody>
-            {guests.map((g) => {
-              const rsvp = rsvpByGuest[g.id]
-              return (
-                <tr key={g.id}>
-                  <td>{g.name} <CopyLink token={g.token} /></td>
-                  <td>{rsvp === true ? <span className="pill yes">Ναι</span> : rsvp === false ? <span className="pill no">Όχι</span> : <span className="muted">—</span>}</td>
-                  <td>{photosByGuest[g.id] || '—'}</td>
-                  <td>{videosByGuest[g.id] || '—'}</td>
-                  <td>{wishedGuest[g.id] ? '✓' : '—'}</td>
-                  <td>{bestQuizByGuest[g.id] != null ? `${bestQuizByGuest[g.id]}/${quizTotal}` : '—'}</td>
-                  <td><AdminDelete adminKey={key} endpoint="/api/admin/delete-guest" payload={{ id: g.id }} confirmText={`Διαγραφή του/της ${g.name}; (θα φύγει και το RSVP του)`} /></td>
-                </tr>
-              )
-            })}
-            {guests.length === 0 && <tr><td colSpan="7" className="muted">Κανένας καλεσμένος ακόμα (τρέξε το seed).</td></tr>}
-          </tbody>
-        </table>
-        <p className="muted" style={{ marginTop: 10 }}>Μετρώνται μόνο όσα έγιναν από το προσωπικό link του καθενός. Οι ανώνυμες συμμετοχές (κοινό QR) φαίνονται στους πίνακες πιο κάτω.</p>
-      </div>
+      <PagedTable header={['Καλεσμένος', 'RSVP', '📸', '🎬', '💌', '🧠', '']} rows={partRows} pageSize={15} empty="Κανένας καλεσμένος ακόμα (τρέξε το seed)." />
+      <p className="muted" style={{ margin: '-6px 0 0' }}>Μετρώνται μόνο όσα έγιναν από το προσωπικό link του καθενός. Οι ανώνυμες συμμετοχές (κοινό QR) φαίνονται στους πίνακες πιο κάτω.</p>
 
       <h2>Κουίζ — κατάταξη</h2>
-      <div className="card">
-        <table>
-          <thead><tr><th>#</th><th>Όνομα</th><th>Σκορ</th></tr></thead>
-          <tbody>
-            {scores.slice(0, 20).map((s, i) => (
-              <tr key={i}><td>{i + 1}</td><td>{s.name}</td><td>{s.score}/{s.total}</td></tr>
-            ))}
-            {scores.length === 0 && <tr><td colSpan="3" className="muted">Κανένα σκορ ακόμα.</td></tr>}
-          </tbody>
-        </table>
-      </div>
+      <PagedTable header={['#', 'Όνομα', 'Σκορ']} rows={quizRows} pageSize={20} empty="Κανένα σκορ ακόμα." />
 
       <h2>Ευχές καλεσμένων 💌</h2>
       <div className="card">
-        {wishes.map((w, i) => (
-          <div key={i} className="wish"><div className="w-msg">{w.message}</div><div className="w-by">— {w.name}</div></div>
-        ))}
-        {wishes.length === 0 && <p className="muted">Καμία ευχή ακόμα.</p>}
+        <Paginator pageSize={10} empty="Καμία ευχή ακόμα.">
+          {wishes.map((w, i) => (
+            <div key={i} className="wish"><div className="w-msg">{w.message}</div><div className="w-by">— {w.name}</div></div>
+          ))}
+        </Paginator>
       </div>
 
       <h2>Φωτογραφίες & βίντεο 📸</h2>
-      <div className="card">
-        {media.length === 0 && <p className="muted">Κανένα αρχείο ακόμα.</p>}
-        <div className="gallery">
-          {media.map((m, i) => (
-            <div key={i} className="ph-wrap">
-              <a className="ph" href={signed[m.path] || '#'} target="_blank" rel="noopener noreferrer"
-                 title={[m.guest_name, m.message].filter(Boolean).join(' — ')}>
-                {m.kind === 'image'
-                  ? <img src={signed[m.path]} alt={m.guest_name || 'φωτο'} loading="lazy" />
-                  : <span className="ph-vid">🎬<span className="ph-vlbl">Βίντεο</span></span>}
-                {m.guest_name && (
-                  <span className="ph-cap">{m.guest_name}</span>
-                )}
-              </a>
-              <AdminDelete adminKey={key} endpoint="/api/admin/delete-media" payload={{ id: m.id, path: m.path }}
-                confirmText="Διαγραφή αυτού του αρχείου;" className="del-btn ph-del" />
-            </div>
-          ))}
-        </div>
-      </div>
+      <Gallery items={mediaItems} adminKey={key} pageSize={24} />
     </main>
   )
 }
