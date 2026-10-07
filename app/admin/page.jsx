@@ -6,6 +6,7 @@ import CopyLink from '../../components/CopyLink'
 import PagedTable from '../../components/PagedTable'
 import Paginator from '../../components/Paginator'
 import Gallery from '../../components/Gallery'
+import RsvpExport from '../../components/RsvpExport'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -98,6 +99,15 @@ export default async function AdminPage({ searchParams }) {
 
   const quizRows = scores.map((s, i) => ({ key: i, cells: [i + 1, s.name, `${s.score}/${s.total}`] }))
 
+  // Δεδομένα για εξαγωγή RSVP σε Excel (απλά πεδία, όχι React elements)
+  const rsvpExport = rsvps.map((r) => ({
+    name: r.guests?.name || '—',
+    attending: r.attending,
+    num_guests: r.num_guests,
+    message: r.message || '',
+    date: r.created_at ? new Date(r.created_at).toLocaleString('el-GR') : '',
+  }))
+
   const mediaItems = media.map((m) => ({
     id: m.id,
     path: m.path,
@@ -122,7 +132,10 @@ export default async function AdminPage({ searchParams }) {
       <h2>Διαχείριση</h2>
       <AdminManage adminKey={key} />
 
-      <h2>RSVP</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <h2 style={{ margin: '30px 0 12px' }}>RSVP</h2>
+        <RsvpExport rows={rsvpExport} />
+      </div>
       <PagedTable header={['Καλεσμένος', 'Απάντηση', 'Άτομα', 'Μήνυμα']} rows={rsvpRows} pageSize={15} empty="Καμία απάντηση ακόμα." />
 
       <h2>Συμμετοχή ανά καλεσμένο</h2>
