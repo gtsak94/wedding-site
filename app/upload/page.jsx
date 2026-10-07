@@ -33,7 +33,6 @@ function humanMB(bytes) { return (bytes / 1048576).toFixed(1) }
 export default function UploadPage() {
   const { token, name: guestName } = useGuestParam()
   const [name, setName] = useState('')
-  const [message, setMessage] = useState('')
   const [items, setItems] = useState([])   // {file, status, kind, error}
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(0)
@@ -83,7 +82,7 @@ export default function UploadPage() {
         path: sign.path, kind: it.kind,
         token: token || undefined,
         guest_name: token ? undefined : name,
-        message, size_bytes: body.size, mime,
+        size_bytes: body.size, mime,
       }),
     })
   }
@@ -130,14 +129,8 @@ export default function UploadPage() {
           </>
         )}
 
-        <label>Δυο λόγια μαζί με τις φωτο (προαιρετικό)</label>
-        <textarea rows={2} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Μια ανάμνηση, μια ευχή…" />
-
         <label>Αρχεία</label>
         <input ref={inputRef} type="file" accept="image/*,video/*" multiple onChange={pick} />
-        <p className="muted" style={{ marginTop: 6 }}>
-          Εικόνες έως {UPLOAD.imageMaxMB}MB, βίντεο έως {UPLOAD.videoMaxMB}MB. Οι εικόνες συμπιέζονται αυτόματα.
-        </p>
 
         {items.length > 0 && (
           <ul className="filelist">
